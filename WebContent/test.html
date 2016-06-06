@@ -1,0 +1,146 @@
+<html>
+<head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/mustache.js" ></script>
+
+<script type="text/javascript">
+			function processData(allText) {
+		 		   var allTextLines = allText.split(/\r\n|\n/);
+		    		var headers = allTextLines[0].split(',');
+		    		var lines = [];
+		
+		    for (var i=1; i<allTextLines.length; i++) {
+		        var data = allTextLines[i].split(',');
+		        if (data.length == headers.length) {
+		            var tarr = [];
+		            for (var j=0; j<headers.length; j++) {
+		                tarr.push(data[j]);
+		            }
+		            //console.log(tarr[2]);
+		            //lines.push(tarr);
+		            $("#listIndustries").append("<option value=\""+tarr[2]+"\">" + tarr[2] + "</option>");
+		        }
+		    }
+		}
+		
+	function LoadAssets(ind,subInd,query) {
+		var data = {};
+		//$(containerId).html("Loading Recommendations");
+		//$(containerId+"1").html("");
+		data.industry = ind;
+		data.subindustry = subInd;
+		data.query = query;
+		console.log('here');
+		console.log(data);
+		$.ajax({
+			type: 'POST',
+			data: JSON.stringify(data),
+	        contentType: 'application/json',
+            //url: 'http://cpe.stage1.mybluemix.net/watsonrecommender',						
+            url: 'http://myserver1212.stage1.mybluemix.net/contentrec',
+            success: function(res) {
+                console.log('success+1');
+                console.log(res.payload.length);
+              	var template = $('#content_template').html();
+             	var html = Mustache.to_html(template, res);
+				$('#recresults').html(html);
+				var firstDocid = res.payload[0].DOCID;
+				var ecccallurl = "https://ibmecm.cloudant.com/wcm70x/_all_docs?include_docs=true&sort=%22-publishDateMs%22&keys=[%22ECC-"+firstDocid+"%22]&limit=1";
+				console.log(ecccallurl);
+				$.ajax({
+    				    type: "GET",
+				        url: ecccallurl,
+				        dataType: "json",
+				        success: function(data) {console.log("data="+data);
+				        	var temp = $('#ecc_template').html();
+             				var htmlstr = Mustache.to_html(temp, data);
+							$('#eccdata').html(htmlstr);
+				        }
+				     });
+           }
+        });
+     }
+		
+  $(document).ready(function () {
+   	$('#searchForm').on('submit',function (e) {
+		/*	alert('here');
+			alert($('#listIndustries').val());
+			alert($('#inputAsset').val());
+			alert($('freeTextAsset').val());
+		
+		*/
+			$('#recresults').html("Loading...");
+			LoadAssets($('#inputInd').val(),$('#inputSubInd').val(),$('#inputTerm').val());	
+		 	return false;
+		});
+	});
+
+
+    function start(){
+        	  $.ajax({
+    				    type: "GET",
+				        url: "IndustriesLists.csv",
+				        dataType: "text",
+				        success: function(data) {processData(data);}
+				     });
+			}
+
+
+						     
+</script>
+			
+</head>
+<body>
+<div class="container">
+	
+	
+<h2> Steve code test </h2>
+
+<div class="panel panel-default" class="col-md-8 control-label">
+
+<div class="panel-heading" class="col-md-8 control-label" >
+	<form class="form-horizontal" id="searchForm">
+<fieldset>
+
+<br>
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textinput">industry</label>  
+  <div class="col-md-4">
+  	<input id="inputInd" name="textinput" type="text" class="form-control input-md">
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textinput">sub-industry</label>  
+  <div class="col-md-4">
+  <input id="inputSubInd" name="textinput" type="text" class="form-control input-md">
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textArea">search term(e.g. 'IBM analytics solutions') </label>  
+  <div class="col-md-4">
+  	<input id="inputTerm" name="textinput" type="text" class="form-control input-md">
+  </div>
+</div>
+
+<label class="col-md-4 control-label" for="button1id"></label>
+  <div class="col-md-8">
+    <button id="searchButton"  type="submit"  name="searchButton" class="submit btn btn-primary">Search</button>
+  </div>
+</fieldset>
+</form>
+</div>
+</div>
+<!-- 
+<div id="recresults"></div>  
+<br>
+<h2>The first ECC call returned data</h2>
+<div id="eccdata"></div> 
+ -->
+</body>
+
+</html>
