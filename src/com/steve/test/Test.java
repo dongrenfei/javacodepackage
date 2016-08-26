@@ -1,5 +1,6 @@
 package com.steve.test;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.MissingResourceException;
 
@@ -8,6 +9,7 @@ import com.steve.db.DBConUtil;
 public class Test {
 
 	public static void main(String[] args) {
+		
 		try {
 			DBConUtil.getDB2Conn();
 		} catch (MissingResourceException mre) {
