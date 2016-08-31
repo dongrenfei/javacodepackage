@@ -24,10 +24,12 @@ public class EmployeeTest {
 		double tenYearsInMilliSeconds = 10*365.25*24*60*60*1000;
 		d.setTime(d.getTime()-(long)tenYearsInMilliSeconds);
 		
-		System.out.println("add ten years: "+staff[0].getHireDay());
+		System.out.println("add ten years to Carl's working time?: "+staff[0].getHireDay());
 		
 		System.out.println("equals ? "+staff[0].equals(staff[2]));
-		
+
+		int x = 1 + (int)(Math.random() * 54);
+		System.out.println(x);
 	}
 
 }
