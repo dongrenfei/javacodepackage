@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Upload third party data</title>
+
+        <link href="css/bootstrap.css" type="text/css" rel="stylesheet" />
+        <link href="css/style.css" type="text/css" rel="stylesheet" />
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.form.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$("#submit").bind("click", function() {
+				var ajax_option = {
+						url:"upload2Cloudant",
+						beforeSend: function() {
+							$("span").show();
+						}, success:function(data) {
+							$("span").hide();
+							alert("Data uploaded successfully.");
+						}, complete: function() {
+							$("span").hide();
+						}, error: function(XMLHttpRequest, textStatus, errorThrown) {
+							console.error("Upload Function: "+XMLHttpRequest.status+", "+textStatus+", "+errorThrown);
+							$("span").hide();
+							alert("Try again and if problem remains please contanct app owner");
+						}
+					};
+
+				$("#uploadForm").ajaxSubmit(ajax_option);
+			});
+		
+		});		
+		</script>
+	</head>
+	
+	<body>
+        
+        <div class="container">
+
+		<h1 class="first-h1">Third party data</h1>
+		
+		<tr>
+		<td>Upload json files:</td>		
+		</tr>
+		<br/>
+
+<form id="uploadForm" action="upload2Cloudant" method="post" enctype="multipart/form-data">
+		<tr>
+			<td>Metatopic file:</td>
+			<td><input type="file" name="metatopic"></td>
+		</tr>
+		<br/>
+		<tr>
+			<td>Topic file:</td>
+			<td><input type="file" name="topic"></td>
+		</tr>
+		<span style="display:none;">data uploading...</span>
+		
+		<br/>
+		<br/>
+		<input type="submit" value="Upload" style="display:none;" />
+		<button type="button" class="btn btn-default btn-lg" id="submit">Upload</button>
+</form>
+		</div>
+	</body>
+</html>
