@@ -27,13 +27,15 @@ public class JsonFormat implements FileHandleBehavior {
 
 			while ((temp = br.readLine()) != null) {
 				sbf.append(temp).append(",");
-				bw.write(temp+",");
+//				bw.write(temp+",");
 			}
 
+			String content = "["+sbf.toString().substring(0, sbf.toString().length()-1) + "]";
+			bw.write(content);
 			br.close();
 			bw.close();
 			
-			System.out.println("handle done."+sbf.toString());
+			System.out.println(this.otputFullPath+" reformat done.");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -42,20 +44,7 @@ public class JsonFormat implements FileHandleBehavior {
 			e.printStackTrace();
 		}
 		
-		return null;
-	}
-
-	public static void main(String[] args) {
-		String input = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\wpdata 2016-11-22.metatopics.json";
-		String otput = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\wpdata 2016-11-22.metatopics.new.json";
-		JsonFormat js = new JsonFormat(input, otput);
-		js.handle();
-		
-		input = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\wpdata 2016-11-22.topics.json";
-		otput = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\wpdata 2016-11-22.topics.new.json";
-		
-		js = new JsonFormat(input, otput);
-		js.handle();
+		return this.otputFullPath;
 	}
 
 }

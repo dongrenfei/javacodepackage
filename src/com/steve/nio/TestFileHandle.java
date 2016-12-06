@@ -23,11 +23,14 @@ public class TestFileHandle {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
-		String infile = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\MKPprocessedAssetsFile_2016-11-21\\NHMprocessedAssetsFile_2016-11-21.json";
-		String otfile = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\MKPprocessedAssetsFile_2016-11-21\\mixed.json";
-		String cloudant = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\cloudant.json";
+		String path = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\assets-2016-12-05\\";
+		String infile = path + "NHMprocessedAssetsFile_2016-12-05.json";
+		String otfile = path + "NHMprocessedAssetsFile_2016-12-05-mixed-with-product.json";
+		String csvname = "NHMprocessedAssetsFile_2016-12-05-mixed-with-product.csv";
+		// products-cloudant-2016-12-5.json articles-cloudant-2016-12-5
+		String cloudant = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\metatopic-2016-12-5\\products-cloudant-2016-12-5.json";
 		StringBuffer sbf = null;
-		
+
 		try {
 			// NHMprocessedAsset
 			BufferedReader br = new BufferedReader(new FileReader(new File(infile)));
@@ -105,7 +108,7 @@ public class TestFileHandle {
 				row.put("IMAGE_URL", json.getString("IMAGE_URL"));
 				row.put("MINOR_BRAND", json.getString("MINOR_BRAND"));
 				row.put("BRANDS", json.getString("BRANDS"));
-				row.put("KEYWORDS", CSVUtils.appendDQ(json.getString("KEYWORDS")));
+				row.put("KEYWORDS", CSVUtils.appendDQ(json.getString("KEYWORDS").replaceAll("[\\[\\]]", "").replaceAll("\"", "")));
 				row.put("DOCUMENT_TYPE", json.getString("DOCUMENT_TYPE"));
 				row.put("PRODUCT_PAGE_NAME", json.getString("PRODUCT_PAGE_NAME"));
 				row.put("MAJOR_BRAND", json.getString("MAJOR_BRAND"));
@@ -143,7 +146,7 @@ public class TestFileHandle {
 			map.put("DISQUS_TOPICS","DISQUS_TOPICS");
 			map.put("DISQUS_TOPICS_SCORES","DISQUS_TOPICS_SCORES");
 			
-			CSVUtils.createCSVFile(exportData, map, "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\MKPprocessedAssetsFile_2016-11-21\\", "mixed.csv");
+			CSVUtils.createCSVFile(exportData, map, path, csvname);
 			
 			System.out.println("handle json done.");
 		} catch (FileNotFoundException e) {

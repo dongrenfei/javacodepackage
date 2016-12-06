@@ -20,7 +20,7 @@ public class MetatopicTopic {
 		List<String> topic = new ArrayList<String>();
 		List<String> score = new ArrayList<String>();
 		String metaortopic = "";
-		
+//		System.out.println("url="+url);
 		try {
 			if(StringUtils.isNotEmpty(url)) {
 				
