@@ -23,12 +23,14 @@ public class TestFileHandle {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
-		String path = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\assets-2016-12-05\\";
-		String infile = path + "NHMprocessedAssetsFile_2016-12-05.json";
-		String otfile = path + "NHMprocessedAssetsFile_2016-12-05-mixed-with-product.json";
-		String csvname = "NHMprocessedAssetsFile_2016-12-05-mixed-with-product.csv";
+		String path = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\assets-2016-12-22\\";
+		String fileName = "NHMprocessedAssetsFile_2016-12-22";
+		String disqusType = "article";
+		String infile = path + fileName + ".json";
+		String otfile = path + fileName + "-" + disqusType + ".json";
+		String csvname = fileName + "-" + disqusType + ".csv";
 		// products-cloudant-2016-12-5.json articles-cloudant-2016-12-5
-		String cloudant = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\metatopic-2016-12-5\\products-cloudant-2016-12-5.json";
+		String cloudant = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\metatopic-2016-12-15\\" + disqusType + ".json";
 		StringBuffer sbf = null;
 
 		try {
@@ -46,6 +48,8 @@ public class TestFileHandle {
 			JSONObject inJson = JSONObject.fromObject(sbf.toString());
 			JSONArray ja = inJson.getJSONArray("assets");
 			JSONObject it = null;
+			Object keyword = null;
+			String title = null;
 			
 			// cloudant
 			br = new BufferedReader(new FileReader(new File(cloudant)));
@@ -66,14 +70,41 @@ public class TestFileHandle {
 				JSONObject mt = MetatopicTopic.find(url, cldJSON.getJSONArray("metatopic"));
 				JSONObject tp = MetatopicTopic.find(url, cldJSON.getJSONArray("topic"));
 				if(mt!=null && !mt.isEmpty()) {//System.out.println(url);
-					it.put("DISQUS_METATOPICS", mt.getString("disqus_metatopics"));
-					it.put("DISQUS_METATOPICS_SCORES", mt.getString("disqus_metatopics_scores"));
+					String disqus_metatopics = mt.getString("disqus_metatopics");
+					String disqus_metatopics_scores = mt.getString("disqus_metatopics_scores");
+					if(disqus_metatopics.equals("[]")) {
+						it.put("DISQUS_METATOPICS", "none");
+					} else {
+						it.put("DISQUS_METATOPICS", mt.getString("disqus_metatopics"));
+					}
+					
+					if(disqus_metatopics_scores.equals("[]")) {
+						it.put("DISQUS_METATOPICS_SCORES", "none");
+					} else {
+						it.put("DISQUS_METATOPICS_SCORES", mt.getString("disqus_metatopics_scores"));
+					}
 				}
 				
 				if(tp!=null && !tp.isEmpty()) {//System.out.println(url);
-					it.put("DISQUS_TOPICS", tp.getString("disqus_topics"));
-					it.put("DISQUS_TOPICS_SCORES", tp.getString("disqus_topics_scores"));
+					String disqus_topics = tp.getString("disqus_topics");
+					String disqus_topics_scores = tp.getString("disqus_topics_scores");
+					if(disqus_topics.equals("[]")) {
+						it.put("DISQUS_TOPICS", "none");
+					} else {
+						it.put("DISQUS_TOPICS", tp.getString("disqus_topics"));
+					}
+					
+					if(disqus_topics_scores.equals("[]")) {
+						it.put("DISQUS_TOPICS_SCORES", "none");
+					} else {
+						it.put("DISQUS_TOPICS_SCORES", tp.getString("disqus_topics_scores"));
+					}
 				}
+				
+				// new requirement, append LANGUAGE_SPECIFIC_TITLE to KEYWORDS
+				keyword = it.get("KEYWORDS");
+				title = it.getString("LANGUAGE_SPECIFIC_TITLE");
+				it.put("KEYWORDS", keyword+","+title);
 				
 				ja.set(i, it);
 			}
@@ -108,7 +139,7 @@ public class TestFileHandle {
 				row.put("IMAGE_URL", json.getString("IMAGE_URL"));
 				row.put("MINOR_BRAND", json.getString("MINOR_BRAND"));
 				row.put("BRANDS", json.getString("BRANDS"));
-				row.put("KEYWORDS", CSVUtils.appendDQ(json.getString("KEYWORDS").replaceAll("[\\[\\]]", "").replaceAll("\"", "")));
+				row.put("KEYWORDS", CSVUtils.appendDQ(json.getString("KEYWORDS").replaceAll("[\\[\\]]", "").replaceAll("\"", "") ));
 				row.put("DOCUMENT_TYPE", json.getString("DOCUMENT_TYPE"));
 				row.put("PRODUCT_PAGE_NAME", json.getString("PRODUCT_PAGE_NAME"));
 				row.put("MAJOR_BRAND", json.getString("MAJOR_BRAND"));

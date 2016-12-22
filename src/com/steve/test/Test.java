@@ -64,7 +64,8 @@ public class Test {
 //		list.add("l2");
 //		list.add("l3");
 		System.out.println("list==="+list.toString().replaceAll("[\\[\\]]", ""));
-		
+		String str0123 = "0123";
+		System.out.println(str0123.substring(0,1));
 	}
 
 }
