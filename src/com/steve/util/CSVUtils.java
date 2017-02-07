@@ -180,6 +180,26 @@ public class CSVUtils {
 	}
 
 	/**
+	 * 条件删除多个文件
+	 * @param filePath 文件目录路径
+	 * @param condition 匹配条件
+	 */
+	public static void deleteFileByCondition(String path, String condition) {
+		File file = new File(path);
+		if (file.exists()) {
+			File[] files = file.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isFile()) {
+					if (files[i].getName().contains(condition)) {
+						System.out.println("delete file: "+files[i].getName());
+						files[i].delete();
+					}
+				}
+			}
+		}
+	}
+	
+	/**
 	 * dealing with commas in a cell of csv
 	 * */
 	public static String appendDQ(String str) {

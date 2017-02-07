@@ -19,18 +19,25 @@ import com.steve.util.MetatopicTopic;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+/**
+ * take MKP or NHM processed assest file and article or product 
+ * meta-topic json file(generated in TestJSONReformat.java)
+ * to generate json and csv files
+ * 
+ * */
 public class TestFileHandle {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
-		String path = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\assets-2016-12-22\\";
-		String fileName = "NHMprocessedAssetsFile_2016-12-22";
-		String disqusType = "article";
+		final String[] TYPE = {"article", "product"};
+		String path = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\assets-2017-01-10\\";
+		String fileName = "NHMprocessedAssetsFile_2017-01-10";
+		String disqusType = TYPE[0];// article or product
 		String infile = path + fileName + ".json";
 		String otfile = path + fileName + "-" + disqusType + ".json";
 		String csvname = fileName + "-" + disqusType + ".csv";
 		// products-cloudant-2016-12-5.json articles-cloudant-2016-12-5
-		String cloudant = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\metatopic-2016-12-15\\" + disqusType + ".json";
+		String cloudant = "C:\\Users\\IBM_ADMIN\\Desktop\\ThirdpartyData\\metatopic-2017-01-10\\" + disqusType + ".json";
 		StringBuffer sbf = null;
 
 		try {
@@ -50,6 +57,8 @@ public class TestFileHandle {
 			JSONObject it = null;
 			Object keyword = null;
 			String title = null;
+			Object alchemyConcept = null;
+			Object alchemyScore = null;
 			
 			// cloudant
 			br = new BufferedReader(new FileReader(new File(cloudant)));
@@ -105,6 +114,13 @@ public class TestFileHandle {
 				keyword = it.get("KEYWORDS");
 				title = it.getString("LANGUAGE_SPECIFIC_TITLE");
 				it.put("KEYWORDS", keyword+","+title);
+				
+				// ad LANGUAGE_SPECIFIC_TITLE as the first ALCHEMY_CONCEPTS, 
+				// with an ALCHEMY_CONCEPTS_SCORES score of 0.99998
+				alchemyConcept = it.get("ALCHEMY_CONCEPTS");
+				alchemyScore = it.get("ALCHEMY_CONCEPTS_SCORES");
+				it.put("ALCHEMY_CONCEPTS", title+","+alchemyConcept);
+				it.put("ALCHEMY_CONCEPTS_SCORES", "0.99998,"+alchemyScore);
 				
 				ja.set(i, it);
 			}

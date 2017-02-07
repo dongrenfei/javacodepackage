@@ -15,6 +15,9 @@ import com.steve.util.CSVUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+/**
+ * this is code to generate a csv for Ray to further analyze
+ * */
 public class JSONtoCSV {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
